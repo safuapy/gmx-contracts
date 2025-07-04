@@ -20,18 +20,39 @@ async function deployCoreContracts(config, deployer, tokens) {
 
   // Deploy Router
   deployer.logger.log('Deploying Router...', 'info');
-  const router = await deployer.deployContract('Router', [
-    vault.address,
-    usdg.address,
-    nativeToken.address
-  ]);
+  const router = await deployer.deployContract('Router', [vault.address, usdg.address, nativeToken.address || ethers.constants.AddressZero]);
 
   // Deploy VaultPriceFeed
   deployer.logger.log('Deploying VaultPriceFeed...', 'info');
   const vaultPriceFeed = await deployer.deployContract('VaultPriceFeed', []);
 
   // Configure VaultPriceFeed
-  await configureVaultPriceFeed(config, deployer, vaultPriceFeed);
+  await deployer.sendTransaction(
+    vaultPriceFeed,
+    'setMaxStrictPriceDeviation',
+    [ethers.utils.parseUnits('0.5', 30)], // 0.5% max deviation
+    'vaultPriceFeed.setMaxStrictPriceDeviation'
+  );
+
+  await deployer.sendTransaction(
+    vaultPriceFeed,
+    'setPriceSampleSpace',
+    [3], // 3 sample space
+    'vaultPriceFeed.setPriceSampleSpace'
+  );
+
+  await deployer.sendTransaction(
+    vaultPriceFeed,
+    'setIsAmmEnabled',
+    [false], // Disable AMM
+    'vaultPriceFeed.setIsAmmEnabled'
+  );
+
+  deployer.logger.log('VaultPriceFeed configured', 'success');
+
+  // Deploy ShortsTracker
+  deployer.logger.log('Deploying ShortsTracker...', 'info');
+  const shortsTracker = await deployer.deployContract('ShortsTracker', [vault.address]);
 
   // Deploy GlpManager
   deployer.logger.log('Deploying GlpManager...', 'info');
@@ -39,6 +60,7 @@ async function deployCoreContracts(config, deployer, tokens) {
     vault.address,
     usdg.address,
     tokens.liquidity.address,
+    shortsTracker.address,
     config.getGlpCooldownDuration() // 15 minutes cooldown
   ]);
 
@@ -46,165 +68,17 @@ async function deployCoreContracts(config, deployer, tokens) {
   deployer.logger.log('Deploying VaultUtils...', 'info');
   const vaultUtils = await deployer.deployContract('VaultUtils', [vault.address]);
 
-  // Deploy VaultErrorController
-  deployer.logger.log('Deploying VaultErrorController...', 'info');
-  const vaultErrorController = await deployer.deployContract('VaultErrorController', []);
-
-  // Configure core contracts
-  await configureCoreContracts(config, deployer, {
-    vault,
-    usdg,
-    router,
-    vaultPriceFeed,
-    glpManager,
-    vaultUtils,
-    vaultErrorController
-  }, tokens);
-
-  return {
-    vault,
-    usdg,
-    router,
-    vaultPriceFeed,
-    glpManager,
-    vaultUtils,
-    vaultErrorController
-  };
-}
-
-/**
- * Configure VaultPriceFeed settings
- */
-async function configureVaultPriceFeed(config, deployer, vaultPriceFeed) {
-  // Set max strict price deviation
-  await deployer.sendTransaction(
-    vaultPriceFeed,
-    'setMaxStrictPriceDeviation',
-    [config.expandDecimals(1, 28)], // 0.05 USD
-    'vaultPriceFeed.setMaxStrictPriceDeviation'
-  );
-
-  // Set price sample space
-  await deployer.sendTransaction(
-    vaultPriceFeed,
-    'setPriceSampleSpace',
-    [1],
-    'vaultPriceFeed.setPriceSampleSpace'
-  );
-
-  // Disable AMM for initial setup
-  await deployer.sendTransaction(
-    vaultPriceFeed,
-    'setIsAmmEnabled',
-    [false],
-    'vaultPriceFeed.setIsAmmEnabled'
-  );
-
-  deployer.logger.log('VaultPriceFeed configured', 'success');
-}
-
-/**
- * Configure all core contracts with proper settings and relationships
- */
-async function configureCoreContracts(config, deployer, coreContracts, tokens) {
-  const { vault, usdg, router, vaultPriceFeed, glpManager, vaultUtils, vaultErrorController } = coreContracts;
-  const fees = config.getFees();
-
-  // Configure GLP token permissions
-  await deployer.sendTransaction(
-    tokens.liquidity,
-    'setMinter',
-    [glpManager.address, true],
-    'liquidity.setMinter(glpManager)'
-  );
-
-  await deployer.sendTransaction(
-    usdg,
-    'addVault',
-    [glpManager.address],
-    'usdg.addVault(glpManager)'
-  );
-
-  // Initialize Vault with 1000x leverage support
-  const maxLeverageBasisPoints = config.getMaxLeverageBasisPoints();
-  deployer.logger.log(`Setting max leverage to ${config.getMaxLeverage()}x (${maxLeverageBasisPoints} basis points)`, 'info');
-
-  await deployer.sendTransaction(
-    vault,
-    'initialize',
-    [
-      router.address,
-      usdg.address,
-      vaultPriceFeed.address,
-      config.getLiquidationFeeUsd(),
-      config.getFundingRateFactor(),
-      config.getStableFundingRateFactor()
-    ],
-    'vault.initialize'
-  );
-
-  // Set the 1000x leverage (this is the key change from GMX)
+  // Configure Vault with 1000x leverage
+  deployer.logger.log('Configuring Vault with 1000x leverage...', 'info');
+  
+  // Set max leverage to 1000x (10,000,000 basis points)
   await deployer.sendTransaction(
     vault,
     'setMaxLeverage',
-    [maxLeverageBasisPoints],
-    `vault.setMaxLeverage(${maxLeverageBasisPoints})`
+    [config.getMaxLeverageBasisPoints()],
+    'vault.setMaxLeverage to 1000x'
   );
 
-  // Set funding rate
-  await deployer.sendTransaction(
-    vault,
-    'setFundingRate',
-    [
-      config.getFundingInterval(),
-      config.getFundingRateFactor(),
-      config.getStableFundingRateFactor()
-    ],
-    'vault.setFundingRate'
-  );
-
-  // Set vault in manager mode
-  await deployer.sendTransaction(
-    vault,
-    'setInManagerMode',
-    [true],
-    'vault.setInManagerMode'
-  );
-
-  await deployer.sendTransaction(
-    vault,
-    'setManager',
-    [glpManager.address, true],
-    'vault.setManager(glpManager)'
-  );
-
-  // Set vault fees
-  await deployer.sendTransaction(
-    vault,
-    'setFees',
-    [
-      fees.taxBasisPoints,
-      fees.stableTaxBasisPoints,
-      fees.mintBurnFeeBasisPoints,
-      fees.swapFeeBasisPoints,
-      fees.stableSwapFeeBasisPoints,
-      fees.marginFeeBasisPoints,
-      config.getLiquidationFeeUsd(),
-      fees.minProfitTime,
-      fees.hasDynamicFees
-    ],
-    'vault.setFees'
-  );
-
-  // Set error controller
-  await deployer.sendTransaction(
-    vault,
-    'setErrorController',
-    [vaultErrorController.address],
-    'vault.setErrorController'
-  );
-
-  // Set vault utils
   await deployer.sendTransaction(
     vault,
     'setVaultUtils',
@@ -212,95 +86,37 @@ async function configureCoreContracts(config, deployer, coreContracts, tokens) {
     'vault.setVaultUtils'
   );
 
-  // Configure GlpManager
   await deployer.sendTransaction(
-    glpManager,
-    'setInPrivateMode',
-    [true],
-    'glpManager.setInPrivateMode'
+    vault,
+    'setPriceFeed',
+    [vaultPriceFeed.address],
+    'vault.setPriceFeed'
   );
 
-  // Set up error messages (from original GMX errors)
-  await setupVaultErrors(deployer, vaultErrorController, vault);
-
-  deployer.logger.log('Core contracts configured successfully', 'success');
-  deployer.logger.log(`✓ Max leverage set to ${config.getMaxLeverage()}x`, 'success');
-}
-
-/**
- * Set up vault error messages
- */
-async function setupVaultErrors(deployer, vaultErrorController, vault) {
-  // Error codes from GMX
-  const errors = [
-    "Vault: zero error",
-    "Vault: already initialized",
-    "Vault: invalid _maxLeverage",
-    "Vault: invalid _taxBasisPoints",
-    "Vault: invalid _stableTaxBasisPoints",
-    "Vault: invalid _mintBurnFeeBasisPoints",
-    "Vault: invalid _swapFeeBasisPoints",
-    "Vault: invalid _stableSwapFeeBasisPoints",
-    "Vault: invalid _marginFeeBasisPoints",
-    "Vault: invalid _liquidationFeeUsd",
-    "Vault: invalid _fundingInterval",
-    "Vault: invalid _fundingRateFactor",
-    "Vault: invalid _stableFundingRateFactor",
-    "Vault: token not whitelisted",
-    "Vault: _token not whitelisted",
-    "Vault: invalid tokenAmount",
-    "Vault: _token not whitelisted",
-    "Vault: invalid tokenAmount",
-    "Vault: invalid usdgAmount",
-    "Vault: _token not whitelisted",
-    "Vault: invalid usdgAmount",
-    "Vault: invalid redemptionAmount",
-    "Vault: invalid amountOut",
-    "Vault: swaps not enabled",
-    "Vault: _tokenIn not whitelisted",
-    "Vault: _tokenOut not whitelisted",
-    "Vault: invalid tokens",
-    "Vault: invalid amountIn",
-    "Vault: leverage not enabled",
-    "Vault: insufficient collateral for fees",
-    "Vault: invalid position.size",
-    "Vault: empty position",
-    "Vault: position size exceeded",
-    "Vault: position collateral exceeded",
-    "Vault: invalid liquidator",
-    "Vault: empty position",
-    "Vault: position cannot be liquidated",
-    "Vault: invalid position",
-    "Vault: invalid _averagePrice",
-    "Vault: collateral should be withdrawn",
-    "Vault: _size must be more than _collateral",
-    "Vault: invalid msg.sender",
-    "Vault: mismatched tokens",
-    "Vault: _collateralToken not whitelisted",
-    "Vault: _collateralToken must not be a stableToken",
-    "Vault: _collateralToken not whitelisted",
-    "Vault: _collateralToken must be a stableToken",
-    "Vault: _indexToken must not be a stableToken",
-    "Vault: _indexToken not shortable",
-    "Vault: invalid increase",
-    "Vault: reserve exceeds pool",
-    "Vault: max USDG exceeded",
-    "Vault: reserve exceeds pool",
-    "Vault: forbidden",
-    "Vault: forbidden",
-    "Vault: maxGasPrice exceeded"
-  ];
-
   await deployer.sendTransaction(
-    vaultErrorController,
-    'setErrors',
-    [vault.address, errors],
-    'vaultErrorController.setErrors'
+    vault,
+    'addRouter',
+    [router.address],
+    vault,
+    'setUsdg',
+    [usdg.address],
+    'vault.setUsdg'
   );
 
-  deployer.logger.log('Vault error messages configured', 'success');
+  deployer.logger.log('Vault configuration completed', 'success');
+  deployer.logger.log(`🎯 Max leverage set to ${config.getMaxLeverage()}x`, 'info');
+
+  return {
+    vault: vault.address,
+    usdg: usdg.address,
+    router: router.address,
+    vaultPriceFeed: vaultPriceFeed.address,
+    shortsTracker: shortsTracker.address,
+    glpManager: glpManager.address,
+    vaultUtils: vaultUtils.address
+  };
 }
 
 module.exports = {
   deployCoreContracts
-}; 
+};

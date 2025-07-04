@@ -1,0 +1,130 @@
+{
+  "project": {
+    "name": "TestDEX",
+    "description": "Test deployment of forked GMX contracts"
+  },
+  "tokens": {
+    "governance": {
+      "name": "TestDEX Token",
+      "symbol": "TDEX",
+      "initialSupply": "0"
+    },
+    "liquidity": {
+      "name": "TestDEX LP",
+      "symbol": "TLP",
+      "initialSupply": "0"
+    },
+    "escrowed": {
+      "name": "Escrowed TestDEX",
+      "symbol": "esTDEX",
+      "initialSupply": "0"
+    },
+    "bonus": {
+      "name": "Bonus TestDEX",
+      "symbol": "bnTDEX",
+      "initialSupply": "0"
+    }
+  },
+  "settings": {
+    "maxLeverage": "1000",
+    "liquidationFeeUsd": "5",
+    "fundingInterval": "28800",
+    "fundingRateFactor": "100",
+    "stableFundingRateFactor": "100",
+    "glpCooldownDuration": "900",
+    "vestingDuration": "31536000"
+  },
+  "fees": {
+    "taxBasisPoints": "50",
+    "stableTaxBasisPoints": "20",
+    "mintBurnFeeBasisPoints": "30",
+    "swapFeeBasisPoints": "30",
+    "stableSwapFeeBasisPoints": "4",
+    "marginFeeBasisPoints": "10",
+    "minProfitTime": "86400",
+    "hasDynamicFees": true
+  },
+  "governance": {
+    "timelockBuffer": "86400",
+    "maxTokenSupply": "13250000000000000000000000",
+    "marginFeeBasisPoints": "10",
+    "maxMarginFeeBasisPoints": "40"
+  },
+  "network": {
+    "chainId": "31337",
+    "name": "arbitrum_fork",
+    "rpcUrl": "http://127.0.0.1:8545",
+    "nativeToken": {
+      "address": "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1",
+      "symbol": "ETH",
+      "decimals": 18
+    },
+    "blockExplorer": "https://arbiscan.io"
+  },
+  "priceFeeds": {
+    "btc": {
+      "address": "0x6ce185860a4963106506C203335A2910413708e9",
+      "decimals": 8,
+      "heartbeat": 86400
+    },
+    "eth": {
+      "address": "0x639Fe6ab55C921f74e7fac1ee960C0B6293ba612",
+      "decimals": 8,
+      "heartbeat": 3600
+    }
+  },
+  "supportedTokens": [
+    {
+      "name": "WBTC",
+      "symbol": "WBTC",
+      "address": "0x2f2a2543B76A4166549F7aaB2e75Bef0aefC5B0f",
+      "decimals": 8,
+      "priceFeed": "0x6ce185860a4963106506C203335A2910413708e9",
+      "isStable": false,
+      "isShortable": true,
+      "tokenWeight": 25000,
+      "minProfitBps": 0,
+      "maxUsdgAmount": 50000000,
+      "bufferAmount": 2000
+    },
+    {
+      "name": "WETH",
+      "symbol": "WETH", 
+      "address": "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1",
+      "decimals": 18,
+      "priceFeed": "0x639Fe6ab55C921f74e7fac1ee960C0B6293ba612",
+      "isStable": false,
+      "isShortable": true,
+      "tokenWeight": 25000,
+      "minProfitBps": 0,
+      "maxUsdgAmount": 50000000,
+      "bufferAmount": 10000
+    },
+    {
+      "name": "USDC",
+      "symbol": "USDC",
+      "address": "0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8",
+      "decimals": 6,
+      "priceFeed": "0x50834F3163758fcC1Df9973b6e91f0F0F0434aD3",
+      "isStable": true,
+      "isShortable": false,
+      "tokenWeight": 20000,
+      "minProfitBps": 0,
+      "maxUsdgAmount": 200000000,
+      "bufferAmount": 100000000
+    },
+    {
+      "name": "USDT",
+      "symbol": "USDT",
+      "address": "0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9",
+      "decimals": 6,
+      "priceFeed": "0x3f3f5dF88dC9F13eac63DF89EC16ef6e7E25DdE7",
+      "isStable": true,
+      "isShortable": false,
+      "tokenWeight": 20000,
+      "minProfitBps": 0,
+      "maxUsdgAmount": 200000000,
+      "bufferAmount": 100000000
+    }
+  ]
+}

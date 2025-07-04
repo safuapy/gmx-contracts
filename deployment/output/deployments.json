@@ -1,0 +1,79 @@
+{
+  "CustomGovernanceToken": {
+    "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+    "transactionHash": "0xcabd1d2bc67bc50818e17ebf05e76fc82c49b807ba046e4401e7f4d2d00cd18a",
+    "blockNumber": 1,
+    "gasUsed": "N/A",
+    "timestamp": "2025-07-04T12:12:03.730Z"
+  },
+  "CustomLiquidityToken": {
+    "address": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+    "transactionHash": "0x4ea063707a1052ce86a497169b604a276a2f7ece97a27231bfed0bf6b46934a6",
+    "blockNumber": 2,
+    "gasUsed": "N/A",
+    "timestamp": "2025-07-04T12:12:03.996Z"
+  },
+  "CustomEscrowedToken": {
+    "address": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
+    "transactionHash": "0x1aafd54efb61929f4cbfefb2e7f6b092d3996abb11cda08e542b4cc19ef973e6",
+    "blockNumber": 3,
+    "gasUsed": "N/A",
+    "timestamp": "2025-07-04T12:12:04.147Z"
+  },
+  "MintableBaseToken": {
+    "address": "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
+    "transactionHash": "0x956e33deea6fc85635f337e685dea0b85bf42c38e4edaaaf9334870144a3bf46",
+    "blockNumber": 4,
+    "gasUsed": "N/A",
+    "timestamp": "2025-07-04T12:12:04.294Z"
+  },
+  "Vault": {
+    "address": "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853",
+    "transactionHash": "0x24ba07f6d64dc649e4485a92a55a303019ec835c5d9dbd27018f3c54c41d2a19",
+    "blockNumber": 8,
+    "gasUsed": "N/A",
+    "timestamp": "2025-07-04T12:12:04.619Z"
+  },
+  "USDG": {
+    "address": "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6",
+    "transactionHash": "0x20a667f8481d66c16214d0d09e34c3b442bb84bd64529611200daa62a7c75da6",
+    "blockNumber": 9,
+    "gasUsed": "N/A",
+    "timestamp": "2025-07-04T12:12:04.768Z"
+  },
+  "Router": {
+    "address": "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318",
+    "transactionHash": "0xcbb4d923c40ece9098dd4e008c66fc4f732fa5620fb6b0064ce8599b037ea30e",
+    "blockNumber": 10,
+    "gasUsed": "N/A",
+    "timestamp": "2025-07-04T12:12:04.899Z"
+  },
+  "VaultPriceFeed": {
+    "address": "0x610178dA211FEF7D417bC0e6FeD39F05609AD788",
+    "transactionHash": "0x592f615575516c2b6a727bce9660bff66138c3c3d0b33dcfacc25d9ee8d8bf79",
+    "blockNumber": 11,
+    "gasUsed": "N/A",
+    "timestamp": "2025-07-04T12:12:05.022Z"
+  },
+  "ShortsTracker": {
+    "address": "0x9A676e781A523b5d0C0e43731313A708CB607508",
+    "transactionHash": "0x9f31796876da558ed8bcc6e370c05f752d3b60438278c80df7847a3c80f6ab9b",
+    "blockNumber": 15,
+    "gasUsed": "N/A",
+    "timestamp": "2025-07-04T12:12:05.259Z"
+  },
+  "GlpManager": {
+    "address": "0x0B306BF915C4d645ff596e518fAf3F9669b97016",
+    "transactionHash": "0x1e2d105e72f0fb495c9e9560fe5dcc8d5a8030b05fab3235fd338d6f89165fac",
+    "blockNumber": 16,
+    "gasUsed": "N/A",
+    "timestamp": "2025-07-04T12:12:05.443Z"
+  },
+  "VaultUtils": {
+    "address": "0x959922bE3CAee4b8Cd9a407cc3ac1C251C2007B1",
+    "transactionHash": "0xe95b22c9c8e64f6053851c9fdab4c5ce4e7d9d2322eef58504c55a4e6d06cb87",
+    "blockNumber": 17,
+    "gasUsed": "N/A",
+    "timestamp": "2025-07-04T12:12:05.535Z"
+  }
+}

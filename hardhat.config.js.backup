@@ -73,21 +73,7 @@ module.exports = {
       timeout: 120000
     },
     hardhat: {
-      allowUnlimitedContractSize: true,
-      forking: {
-        url: ARBITRUM_URL || "https://arb1.arbitrum.io/rpc",
-        blockNumber: undefined // Use latest block
-      },
-      accounts: {
-        mnemonic: "test test test test test test test test test test test junk",
-        count: 10
-      }
-    },
-    arbitrum_fork: {
-      url: "http://127.0.0.1:8545",
-      chainId: 31337,
-      allowUnlimitedContractSize: true,
-      accounts: getEnvAccounts("0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80")
+      allowUnlimitedContractSize: true
     },
     bsc: {
       url: BSC_URL,

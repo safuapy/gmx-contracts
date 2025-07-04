@@ -1,0 +1,77 @@
+{
+  "project": {
+    "name": "TestDEX",
+    "description": "Test deployment of forked GMX contracts"
+  },
+  "tokens": {
+    "governance": {
+      "name": "TestDEX Token",
+      "symbol": "TDEX",
+      "initialSupply": "0"
+    },
+    "liquidity": {
+      "name": "TestDEX LP",
+      "symbol": "TLP",
+      "initialSupply": "0"
+    },
+    "escrowed": {
+      "name": "Escrowed TestDEX",
+      "symbol": "esTDEX",
+      "initialSupply": "0"
+    },
+    "bonus": {
+      "name": "Bonus TestDEX",
+      "symbol": "bnTDEX",
+      "initialSupply": "0"
+    }
+  },
+  "settings": {
+    "maxLeverage": "1000",
+    "liquidationFeeUsd": "5",
+    "fundingInterval": "28800",
+    "fundingRateFactor": "100",
+    "stableFundingRateFactor": "100",
+    "glpCooldownDuration": "900",
+    "vestingDuration": "31536000"
+  },
+  "fees": {
+    "taxBasisPoints": "50",
+    "stableTaxBasisPoints": "20",
+    "mintBurnFeeBasisPoints": "30",
+    "swapFeeBasisPoints": "30",
+    "stableSwapFeeBasisPoints": "4",
+    "marginFeeBasisPoints": "10",
+    "minProfitTime": "86400",
+    "hasDynamicFees": true
+  },
+  "governance": {
+    "timelockBuffer": "86400",
+    "maxTokenSupply": "13250000000000000000000000",
+    "marginFeeBasisPoints": "10",
+    "maxMarginFeeBasisPoints": "40"
+  },
+  "network": {
+    "chainId": "31337",
+    "name": "hardhat",
+    "rpcUrl": "http://127.0.0.1:8545",
+    "nativeToken": {
+      "address": "0x0000000000000000000000000000000000000000",
+      "symbol": "ETH",
+      "decimals": 18
+    },
+    "blockExplorer": "https://localhost"
+  },
+  "priceFeeds": {
+    "btc": {
+      "address": "0x0000000000000000000000000000000000000001",
+      "decimals": 8,
+      "heartbeat": 86400
+    },
+    "eth": {
+      "address": "0x0000000000000000000000000000000000000002",
+      "decimals": 8,
+      "heartbeat": 3600
+    }
+  },
+  "supportedTokens": []
+}
